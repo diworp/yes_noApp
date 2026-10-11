@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:yes_no_app/domain/entities/message.dart';
 
 class HerMessageBubble extends StatelessWidget {
-  const HerMessageBubble({super.key});
+    final Message message;
+  const HerMessageBubble({super.key,required this.message,});
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -17,7 +21,7 @@ class HerMessageBubble extends StatelessWidget {
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
             child: Text(
-              'Una de warzones HOY O QUE!!!!!????',
+              message.text,
               style: TextStyle(color: Colors.white),
             ),
           ),
@@ -25,37 +29,38 @@ class HerMessageBubble extends StatelessWidget {
 
         const SizedBox(height: 5),
 
-        _ImageBubble(),
+        _ImageBubble(message.imageUrl!),
 
-       SizedBox(height: 20),
+        SizedBox(height: 20),
       ],
     );
   }
 }
 
 class _ImageBubble extends StatelessWidget {
+    final String imageUrl;
+    const _ImageBubble(this.imageUrl);
+
   @override
   Widget build(BuildContext context) {
-    final size= MediaQuery.of(context).size;
+    final size = MediaQuery.of(context).size;
 
-    
     return ClipRRect(
       borderRadius: BorderRadius.circular(20),
       child: Image.network(
-        'https://yesno.wtf/assets/yes/4-c53643ecec77153eefb461e053fb4947.gif',
-      width: size.width * 0.7,
-      height: 150,
-      fit: BoxFit.cover,
-      loadingBuilder:(context, child, loadingProgress) {
-        if(loadingProgress==null) return child;
-        return Container(
-          width: size.width * 0.7,
-          height: 150,
-          padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-          child: Text('Mi perra esta escribiendo...'),
-          
+       imageUrl,
+        width: size.width * 0.7,
+        height: 150,
+        fit: BoxFit.cover,
+        loadingBuilder: (context, child, loadingProgress) {
+          if (loadingProgress == null) return child;
+          return Container(
+            width: size.width * 0.7,
+            height: 150,
+            padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+            child: Text('Cargando imagen...'),
           );
-      } ,
+        },
       ),
     );
   }

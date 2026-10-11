@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:provider/provider.dart';
+import 'package:yes_no_app/domain/entities/message.dart';
+import 'package:yes_no_app/presentation/providers/chat_provider.dart';
 import 'package:yes_no_app/presentation/widgets/chat/_my_message_bubble.dart';
 import 'package:yes_no_app/presentation/widgets/chat/her_message.dart';
+import 'package:yes_no_app/presentation/widgets/chat/shared/message_field_box.dart';
 
 class ChatScreen extends StatelessWidget {
   const ChatScreen({super.key});
@@ -29,6 +33,8 @@ class ChatScreen extends StatelessWidget {
 class _ChatView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    final chatProvider = context.watch<ChatProvider>();
+
     return SafeArea(
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 10),
@@ -36,20 +42,27 @@ class _ChatView extends StatelessWidget {
           children: [
             Expanded(
               child: ListView.builder(
-                itemCount: 100,
+                controller: chatProvider.chatScrollController,
+                itemCount: chatProvider.messageList.length,
                 itemBuilder: (context, index) {
-                  return (index % 2 == 0)
-                      ? const HerMessageBubble()
-                      : const MyMessageBubble();
+                  final message = chatProvider.messageList[index];
+                  return (message.fromWho == FromWho.hers)
+                      ? HerMessageBubble(message : message)
+                      : MyMessageBubble(message: message);
                 },
               ),
             ),
             SizedBox(height: 25),
-            Text('Aqui va el input'),
-
+            MessageFieldBox(
+              onValue:chatProvider.sendMessage,
+            ),
           ],
         ),
       ),
     );
   }
+}
+
+extension on T Function<T>() {
+  void operator <(ChatProvider other) {}
 }
